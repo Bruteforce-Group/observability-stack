@@ -1,0 +1,839 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [
+    {
+      "icon": "external link",
+      "title": "ULP API Console",
+      "url": "https://mars.int.bozza.au:9443"
+    },
+    {
+      "icon": "external link", 
+      "title": "User Assets Service",
+      "url": "http://mars.int.bozza.au:9780"
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 200,
+      "panels": [],
+      "title": "🏢 UniFi Location Platform (ULP) - Mars Observatory",
+      "type": "row"
+    },
+    {
+      "datasource": "Loki",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "green",
+                "value": 2
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
+      "id": 201,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "expr": "count(count_over_time({hostname=\"mars\", program=~\".*ulp-go-app.*|.*unifi-user-assets.*\"}[5m]))",
+          "legendFormat": "ULP Services",
+          "refId": "A"
+        }
+      ],
+      "title": "🟢 ULP Services Status",
+      "type": "stat"
+    },
+    {
+      "datasource": "Loki",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "text": "No Devices"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "green",
+                "value": 3
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      },
+      "id": 202,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "expr": "sum(count_over_time({hostname=\"mars\"} |~ \"device.*tracking|MacBook|iPhone\" [10m]))",
+          "legendFormat": "Tracked Devices",
+          "refId": "A"
+        }
+      ],
+      "title": "📱 Device Tracking",
+      "type": "stat"
+    },
+    {
+      "datasource": "Loki",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "green",
+                "value": 10
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
+      "id": 203,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "expr": "rate(sum(count_over_time({hostname=\"mars\"} |~ \"/api/v2/\" [5m]))[5m:])",
+          "legendFormat": "API Requests/sec",
+          "refId": "A"
+        }
+      ],
+      "title": "🔗 API Activity",
+      "type": "stat"
+    },
+    {
+      "datasource": "Loki",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "text": "No Locations"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "id": 204,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "expr": "count(count_over_time({hostname=\"mars\"} |~ \"dbc6e391-bc7a-4309-8cef-919b5c08694d|building.*location\" [10m]))",
+          "legendFormat": "Managed Locations",
+          "refId": "A"
+        }
+      ],
+      "title": "🏢 Location Management", 
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 205,
+      "panels": [],
+      "title": "📊 ULP Service Analytics & Performance",
+      "type": "row"
+    },
+    {
+      "datasource": "Loki",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 6
+      },
+      "id": 206,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(sum(count_over_time({hostname=\"mars\"} |~ \"/api/v2/identity\" [1m])) by (program)[5m:])",
+          "legendFormat": "Identity API",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(sum(count_over_time({hostname=\"mars\"} |~ \"/api/v2/user\" [1m])) by (program)[5m:])",
+          "legendFormat": "User API",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(sum(count_over_time({hostname=\"mars\"} |~ \"location.*services|workspace\" [1m])) by (program)[5m:])",
+          "legendFormat": "Location Services",
+          "refId": "C"
+        }
+      ],
+      "title": "🔗 ULP API Request Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Loki",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            }
+          },
+          "mappings": [],
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 8,
+        "y": 6
+      },
+      "id": 207,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(count_over_time({hostname=\"mars\"} |~ \"MacBook.*Pro.*M1\" [10m]))",
+          "legendFormat": "MacBook Pro M1",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(count_over_time({hostname=\"mars\"} |~ \"MacBook.*Pro.*Intel\" [10m]))",
+          "legendFormat": "MacBook Pro Intel",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(count_over_time({hostname=\"mars\"} |~ \"MacBook.*Air.*M1\" [10m]))",
+          "legendFormat": "MacBook Air M1",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(count_over_time({hostname=\"mars\"} |~ \"iPhone.*11.*Pro\" [10m]))",
+          "legendFormat": "iPhone 11 Pro",
+          "refId": "D"
+        },
+        {
+          "expr": "sum(count_over_time({hostname=\"mars\"} |~ \"iPhone.*15.*Pro\" [10m]))",
+          "legendFormat": "iPhone 15 Pro",
+          "refId": "E"
+        }
+      ],
+      "title": "📱 Device Distribution",
+      "type": "piechart"
+    },
+    {
+      "datasource": "Loki",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 6
+      },
+      "id": 208,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(count_over_time({hostname=\"mars\"} |~ \"RADIUS.*provisioning\" [1m])) by (program)",
+          "legendFormat": "RADIUS Provisioning",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(count_over_time({hostname=\"mars\"} |~ \"WiFi.*connection|WiFi.*authentication\" [1m])) by (program)",
+          "legendFormat": "WiFi Authentication",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(count_over_time({hostname=\"mars\"} |~ \"location.*cleanup\" [1m])) by (program)",
+          "legendFormat": "Location Cleanup",
+          "refId": "C"
+        }
+      ],
+      "title": "⚙️ ULP Operations Activity",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 209,
+      "panels": [],
+      "title": "📝 ULP Service Logs & Events (Full-Width Analysis)",
+      "type": "row"
+    },
+    {
+      "datasource": "Loki",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 210,
+      "options": {
+        "showTime": true,
+        "showLabels": true,
+        "showCommonLabels": false,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": false,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending"
+      },
+      "targets": [
+        {
+          "expr": "{hostname=\"mars\"} |~ \"ulp-go-app|unifi-user-assets-app\" | regexp \"(?P<service>ulp-go-app|unifi-user-assets-app).*(?P<pid>PID [0-9]+)\" | label_format service=\"{{.service}}\" | label_format process=\"{{.pid}}\"",
+          "refId": "A"
+        }
+      ],
+      "title": "🏢 ULP Core Service Logs (ulp-go-app & user-assets)",
+      "type": "logs"
+    },
+    {
+      "datasource": "Loki",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 211,
+      "options": {
+        "showTime": true,
+        "showLabels": true,
+        "showCommonLabels": false,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": false,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending"
+      },
+      "targets": [
+        {
+          "expr": "{hostname=\"mars\"} |~ \"MacBook|iPhone\" | regexp \"(?P<device_type>MacBook.*|iPhone.*)\" | label_format device=\"{{.device_type}}\"",
+          "refId": "A"
+        }
+      ],
+      "title": "📱 Device Tracking Events (MacBooks & iPhones)",
+      "type": "logs"
+    },
+    {
+      "datasource": "Loki",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
+      "id": 212,
+      "options": {
+        "showTime": true,
+        "showLabels": true,
+        "showCommonLabels": false,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": false,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending"
+      },
+      "targets": [
+        {
+          "expr": "{hostname=\"mars\"} |~ \"/api/v2/\" | regexp \"(?P<api_endpoint>/api/v2/[a-zA-Z/]+)\" | label_format endpoint=\"{{.api_endpoint}}\"",
+          "refId": "A"
+        }
+      ],
+      "title": "🔗 API Activity Logs (Identity, User, Location Services)",
+      "type": "logs"
+    },
+    {
+      "datasource": "Loki",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 37
+      },
+      "id": 213,
+      "options": {
+        "showTime": true,
+        "showLabels": true,
+        "showCommonLabels": false,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": false,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending"
+      },
+      "targets": [
+        {
+          "expr": "{hostname=\"mars\"} |~ \"RADIUS|WiFi.*position|location.*cleanup|cloud.*integration\" | regexp \"(?P<operation>RADIUS.*|WiFi.*|location.*|cloud.*)\" | label_format operation=\"{{.operation}}\"",
+          "refId": "A"
+        }
+      ],
+      "title": "⚙️ ULP Operations & Integration Logs",
+      "type": "logs"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "id": 214,
+      "panels": [],
+      "title": "🚨 ULP Error Monitoring & Alerts",
+      "type": "row"
+    },
+    {
+      "datasource": "Loki",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 46
+      },
+      "id": 215,
+      "options": {
+        "showTime": true,
+        "showLabels": true,
+        "showCommonLabels": false,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": false,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending"
+      },
+      "targets": [
+        {
+          "expr": "{hostname=\"mars\"} |~ \"ERROR|error|Error|WARN|warn|Warning|CRITICAL|critical|Failed|failed\"",
+          "refId": "A"
+        }
+      ],
+      "title": "🚨 ULP Error & Warning Logs",
+      "type": "logs"
+    },
+    {
+      "datasource": "Loki",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 46
+      },
+      "id": 216,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(count_over_time({hostname=\"mars\"} |~ \"ERROR|error|Error\" [1m]))",
+          "legendFormat": "Errors",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(count_over_time({hostname=\"mars\"} |~ \"WARN|warn|Warning\" [1m]))",
+          "legendFormat": "Warnings",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(count_over_time({hostname=\"mars\"} |~ \"CRITICAL|critical|Failed|failed\" [1m]))",
+          "legendFormat": "Critical Events",
+          "refId": "C"
+        }
+      ],
+      "title": "📊 Error Rate Trends",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 52
+      },
+      "id": 217,
+      "panels": [],
+      "title": "📋 ULP Service Information & Configuration",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 53
+      },
+      "id": 218,
+      "options": {
+        "content": "# 🏢 UniFi Location Platform (ULP) - Mars Observatory\\n\\n## 🔧 **Service Overview**\\nThe **UniFi Location Platform (ULP) Go version 1.11.26** is running on mars, providing Ubiquiti's **Identity and Location Service** for indoor positioning and device management.\\n\\n## 🚀 **Main Components**\\n### Core Services\\n- **ulp-go-app** (PID 5831) - Main positioning service on **port 9443 (HTTPS)**\\n- **unifi-user-assets-app** (PID 5733) - User assets service on **port 9780 (HTTP)**\\n\\n## 📊 **Current Activity**\\n### Device Tracking (5 devices)\\n- 📱 **2 MacBook Pro models** (M1 & Intel)\\n- 💻 **1 MacBook Air M1**\\n- 📱 **2 iPhones** (11 Pro & 15 Pro)\\n\\n### Location Management\\n- 🏢 **1 building location** managed\\n- 🆔 **UUID**: `dbc6e391-bc7a-4309-8cef-919b5c08694d`\\n\\n### API Services\\n- 🔐 **Identity management** (`/api/v2/identity/*`)\\n- 👤 **User management** (`/api/v2/user/*`)\\n- 💼 **Workspace information**\\n- 📍 **Location services**\\n- 📱 **Device registration and tracking**\\n\\n## ⚙️ **Real-time Operations**\\n- 🧹 **Location cleanup**: Automatic cleanup of deleted locations hourly\\n- 🔐 **RADIUS provisioning**: WiFi user credentials updated every 5 minutes\\n- 📱 **Device monitoring**: Continuous tracking of connected devices\\n- 🆔 **Identity services**: User authentication and authorization management\\n\\n## 🏗️ **Technical Implementation**\\n- 🗄️ **Database**: PostgreSQL backend with 65+ tables\\n- 🏛️ **Architecture**: Golang-based microservices architecture\\n- 🔒 **Security**: Encrypted database, SSL/TLS endpoints, device authentication\\n- 🔗 **Integration**: Connected to UniFi Network Controller for WiFi positioning\\n\\n## 🔗 **Quick Links**\\n- **ULP API Console**: [https://mars.int.bozza.au:9443](https://mars.int.bozza.au:9443)\\n- **User Assets Service**: [http://mars.int.bozza.au:9780](http://mars.int.bozza.au:9780)\\n- **Prometheus**: [http://192.168.22.253:9090](http://192.168.22.253:9090)\\n- **Loki Logs**: Use the Explore tab → Loki data source\\n\\n## 📝 **Monitoring Notes**\\n- **Service Health**: Monitor the \\\"ULP Services Status\\\" panel for service availability\\n- **Device Tracking**: Real-time device position tracking via WiFi triangulation\\n- **API Activity**: RESTful API usage for identity and location services\\n- **Error Monitoring**: Watch the error panels for service issues\\n\\n---\\n**🏢 Indoor Positioning API Service | 🚀 Deployed on Mars (192.168.22.1) | Built with ❤️ for Enterprise Location Analytics**\",\n        \"mode\": \"markdown\"\n      },\n      \"pluginVersion\": \"8.0.0\",\n      \"title\": \"📋 ULP Service Documentation & Reference Guide\",\n      \"type\": \"text\"\n    }\n  ],\n  \"refresh\": \"30s\",\n  \"schemaVersion\": 27,\n  \"style\": \"dark\",\n  \"tags\": [\"unifi\", \"location\", \"platform\", \"ulp\", \"mars\", \"indoor-positioning\", \"device-tracking\"],\n  \"templating\": {\n    \"list\": [\n      {\n        \"description\": \"Filter by device type\",\n        \"hide\": 0,\n        \"includeAll\": true,\n        \"label\": \"Device Type\",\n        \"multi\": true,\n        \"name\": \"device_type\",\n        \"options\": [\n          {\n            \"selected\": true,\n            \"text\": \"All\",\n            \"value\": \"$__all\"\n          },\n          {\n            \"selected\": false,\n            \"text\": \"MacBook\",\n            \"value\": \"MacBook\"\n          },\n          {\n            \"selected\": false,\n            \"text\": \"iPhone\",\n            \"value\": \"iPhone\"\n          }\n        ],\n        \"query\": \"MacBook, iPhone\",\n        \"queryValue\": \"\",\n        \"skipUrlSync\": false,\n        \"type\": \"custom\"\n      }\n    ]\n  },\n  \"time\": {\n    \"from\": \"now-1h\",\n    \"to\": \"now\"\n  },\n  \"timepicker\": {},\n  \"timezone\": \"\",\n  \"title\": \"🏢 UniFi Location Platform (ULP) - Mars Observatory\",\n  \"uid\": \"ulp-mars-dashboard\",\n  \"version\": 1\n}

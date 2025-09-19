@@ -1,0 +1,73 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "🔥 UniFi Firewall & Security Monitor",
+    "tags": ["unifi", "firewall", "security", "monitoring"],
+    "timezone": "",
+    "panels": [
+      {
+        "id": 1,
+        "title": "🔥 Firewall Blocks (Real-time)",
+        "type": "logs",
+        "targets": [
+          {
+            "expr": "{job=\"unifi-firewall\"} |~ \"BLOCK|DROP|REJECT\"",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "🚨 Security Events",
+        "type": "logs", 
+        "targets": [
+          {
+            "expr": "{job=\"unifi-security\"} |= \"\"",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "📊 Firewall Rule Hits",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "sum(count_over_time({job=\"unifi-firewall\"}[1m])) by (hostname)",
+            "legendFormat": "{{hostname}} blocks/min",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 8, "x": 0, "y": 8}
+      },
+      {
+        "id": 4,
+        "title": "🎯 Top Blocked IPs",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "topk(10, sum(count_over_time({job=\"unifi-firewall\"} |~ \"BLOCK.*SRC=(\\\\d+\\\\.\\\\d+\\\\.\\\\d+\\\\.\\\\d+)\"[5m])) by (src_ip))",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 8, "x": 8, "y": 8}
+      },
+      {
+        "id": 5,
+        "title": "🔍 IDS/IPS Alerts",
+        "type": "logs",
+        "targets": [
+          {
+            "expr": "{job=\"unifi-ids\"} |= \"\"",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 8, "x": 16, "y": 8}
+      }
+    ],
+    "time": {"from": "now-1h", "to": "now"},
+    "refresh": "30s"
+  }
+}

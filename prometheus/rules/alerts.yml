@@ -1,0 +1,127 @@
+groups:
+- name: instance.rules
+  rules:
+  - alert: InstanceDown
+    expr: up == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Instance {{ $labels.instance }} down"
+      description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+
+- name: host.rules
+  rules:
+  - alert: HighCpuLoad
+    expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High CPU load on {{ $labels.instance }}"
+      description: "CPU load is {{ humanize $value}}%."
+
+  - alert: HighMemoryLoad
+    expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High memory load on {{ $labels.instance }}"
+      description: "Memory load is {{ humanize $value}}%."
+
+  - alert: HighDiskUsage
+    expr: (node_filesystem_size_bytes{fstype=~"ext4|xfs"} - node_filesystem_free_bytes{fstype=~"ext4|xfs"}) / node_filesystem_size_bytes{fstype=~"ext4|xfs"} * 100 > 85
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High disk usage on {{ $labels.instance }}"
+      description: "Disk usage is {{ humanize $value}}% on {{ $labels.device }}."
+
+  - alert: DiskSpaceLow
+    expr: (node_filesystem_avail_bytes{fstype=~"ext4|xfs"} * 100) / node_filesystem_size_bytes{fstype=~"ext4|xfs"} < 10
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Low disk space on {{ $labels.instance }}"
+      description: "Only {{ humanize $value}}% left on {{ $labels.device }}."
+
+- name: container.rules
+  rules:
+  - alert: ContainerKilled
+    expr: increase(container_tasks_state{state="killed"}[5m]) > 0
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Container killed on {{ $labels.instance }}"
+      description: "A container has been killed."
+
+  - alert: ContainerCpuUsage
+    expr: (sum(rate(container_cpu_usage_seconds_total{container!=""}[3m])) BY (instance, name) * 100) > 80
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Container CPU usage on {{ $labels.instance }}"
+      description: "Container CPU usage is above 80%."
+
+  - alert: ContainerMemoryUsage
+    expr: (sum(container_memory_working_set_bytes{name!=""}) BY (instance, name) / sum(container_spec_memory_limit_bytes > 0) BY (instance, name) * 100) > 80
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Container Memory usage on {{ $labels.instance }}"
+      description: "Container Memory usage is above 80%."
+
+- name: prometheus.rules
+  rules:
+  - alert: PrometheusJobMissing
+    expr: absent(up{job="prometheus"})
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Prometheus job missing"
+      description: "A Prometheus job has disappeared."
+
+  - alert: PrometheusTargetMissing
+    expr: up == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus target missing on {{ $labels.instance }}"
+      description: "A Prometheus target has disappeared. An exporter might be crashed."
+
+  - alert: PrometheusConfigurationReloadFailure
+    expr: prometheus_config_last_reload_successful != 1
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Prometheus configuration reload failure"
+      description: "Prometheus configuration reload error."
+
+  - alert: PrometheusTooManyRestarts
+    expr: changes(process_start_time_seconds{job=~"prometheus|pushgateway|alertmanager"}[15m]) > 2
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Prometheus too many restarts on {{ $labels.instance }}"
+      description: "Prometheus has restarted more than twice in the last 15 minutes. It might be crashlooping."
+
+- name: grafana.rules
+  rules:
+  - alert: GrafanaDown
+    expr: absent(up{job="grafana"})
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Grafana is down"
+      description: "Grafana has been down for more than 5 minutes."
